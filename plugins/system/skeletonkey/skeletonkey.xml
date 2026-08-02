@@ -13,7 +13,7 @@
     <copyright>Copyright (c)2022-2026 Nicholas K. Dionysopoulos</copyright>
     <license>GNU GPL v3 or later</license>
     <creationDate>2026-06-20</creationDate>
-    <version>1.2.4</version>
+    <version>1.2.5</version>
     <description>PLG_SYSTEM_SKELETONKEY_XML_DESCRIPTION</description>
     <namespace path="src">Joomla\Plugin\System\Skeletonkey</namespace>
 
@@ -111,6 +111,20 @@
                     <option value="16">16</option>
                     <option value="32">32</option>
                     <option value="64">64</option>
+                </field>
+
+                <field
+                        name="bypass_mfa"
+                        type="radio"
+                        layout="joomla.form.field.radio.switcher"
+                        label="PLG_SYSTEM_SKELETONKEY_CONFIG_BYPASS_MFA_LABEL"
+                        description="PLG_SYSTEM_SKELETONKEY_CONFIG_BYPASS_MFA_DESC"
+                        default="0"
+                        filter="integer"
+                        validate="options"
+                >
+                    <option value="0">JNO</option>
+                    <option value="1">JYES</option>
                 </field>
 
             </fieldset>

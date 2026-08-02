@@ -47,10 +47,12 @@ class SkeletonKey extends ActionLogPlugin implements SubscriberInterface
 		 * @var  User $currentUser   User asking to log in as another user
 		 * @var  User $user          The user to be logged in as
 		 * @var  bool $createdCookie Was the login cookie created?
+		 * @var  bool $mfaBypass     Was Multi-factor Authentication bypassed for this login?
 		 */
 		$currentUser   = $event->getArgument('controlUser');
 		$user          = $event->getArgument('targetUser');
 		$createdCookie = $event->getArgument('createdCookie');
+		$mfaBypass     = $event->getArgument('mfaBypass', false);
 
 		// The data to store for this record
 		$data = [
@@ -60,9 +62,18 @@ class SkeletonKey extends ActionLogPlugin implements SubscriberInterface
 			'requested_link'     => 'index.php?option=com_users&task=user.edit&id=' . $user->id,
 		];
 
-		$languageKey = $createdCookie
-			? 'PLG_ACTIONLOG_SKELETONKEY_LOG_REQUEST_SUCCESS'
-			: 'PLG_ACTIONLOG_SKELETONKEY_LOG_REQUEST_FAIL';
+		if (!$createdCookie)
+		{
+			$languageKey = 'PLG_ACTIONLOG_SKELETONKEY_LOG_REQUEST_FAIL';
+		}
+		elseif ($mfaBypass)
+		{
+			$languageKey = 'PLG_ACTIONLOG_SKELETONKEY_LOG_REQUEST_SUCCESS_MFABYPASS';
+		}
+		else
+		{
+			$languageKey = 'PLG_ACTIONLOG_SKELETONKEY_LOG_REQUEST_SUCCESS';
+		}
 
 		// The [$data] is not a typo; that's how Joomla! expects us to log user actions: an array of arrays.
 		$this->addLog([$data], $languageKey, 'plg_system_skeletonkey', $currentUser->id);

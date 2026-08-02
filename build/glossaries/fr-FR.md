@@ -25,3 +25,5 @@ Canonical source: English (en-GB)
 | authorised | autorisé | Past participle for log entries |
 | Default | Par défaut | Default parameter value |
 | AJAX | AJAX | Technical term — keep untranslated |
+| Multi-factor Authentication (MFA) | authentification multifacteur (MFA) | Joomla core security feature |
+| Bypass | contourner | Verb, used for the MFA bypass setting |

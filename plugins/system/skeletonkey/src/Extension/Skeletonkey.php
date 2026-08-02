@@ -211,11 +211,42 @@ class Skeletonkey extends CMSPlugin implements SubscriberInterface, DatabaseAwar
 		// If the cookie is set try to log in the user using it
 		$cookieName = self::COOKIE_PREFIX . $this->getHashedUserAgent();
 
-		if ($this->getApplication()->getInput()->cookie->get($cookieName))
+		if (!$this->getApplication()->getInput()->cookie->get($cookieName))
 		{
-
-			$this->getApplication()->login(['username' => ''], ['silent' => true]);
+			return;
 		}
+
+		$loginResult = $this->getApplication()->login(['username' => ''], ['silent' => true]);
+
+		// Should I bypass Joomla's Multi-factor Authentication for this impersonated session?
+		if ($this->params->get('bypass_mfa', 0) != 1)
+		{
+			return;
+		}
+
+		// Only bypass MFA if the login we just performed actually succeeded.
+		if ($loginResult !== true)
+		{
+			return;
+		}
+
+		$identity = $this->getApplication()->getIdentity();
+
+		if (!($identity instanceof User) || $identity->guest || $identity->id <= 0)
+		{
+			return;
+		}
+
+		/**
+		 * Tell Joomla's MFA gate that this session has already satisfied MFA.
+		 *
+		 * `mfa_checked` skips the captive MFA page. `mandatory_mfa_setup` must ALSO be cleared: Joomla
+		 * never resets it on login, so a stale value left in this browser's frontend session would
+		 * defeat `mfa_checked` in needsMultiFactorAuthenticationRedirection().
+		 */
+		$session = $this->getApplication()->getSession();
+		$session->set('com_users.mfa_checked', 1);
+		$session->set('com_users.mandatory_mfa_setup', 0);
 	}
 
 	/**
@@ -295,6 +326,7 @@ class Skeletonkey extends CMSPlugin implements SubscriberInterface, DatabaseAwar
 				'controlUser'   => $currentUser,
 				'targetUser'    => $user,
 				'createdCookie' => $createdCookie,
+				'mfaBypass'     => (bool) ($this->params->get('bypass_mfa', 0) == 1),
 			])
 		);
 

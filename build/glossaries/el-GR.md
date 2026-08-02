@@ -25,3 +25,5 @@ Canonical source: English (en-GB)
 | authorised | εξουσιοδοτήθηκε | Past participle for log entries |
 | Default | Εξορισμού τιμή | Default parameter value |
 | AJAX | AJAX | Technical term — keep untranslated |
+| Multi-factor Authentication (MFA) | Πολυπαραγοντική Ταυτοποίηση (MFA) | Joomla core security feature |
+| Bypass | παράκαμψη | Noun/verb, used for the MFA bypass setting |
